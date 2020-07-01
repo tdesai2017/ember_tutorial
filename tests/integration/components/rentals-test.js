@@ -1,20 +1,12 @@
 import { module, test } from 'qunit';
 import { setupRenderingTest } from 'ember-qunit';
-import { render, fillIn } from '@ember/test-helpers';
+import { render } from '@ember/test-helpers';
 import { hbs } from 'ember-cli-htmlbars';
 
-module('Integration | Component | rental', function(hooks) {
+module('Integration | Component | rentals', function(hooks) {
   setupRenderingTest(hooks);
 
-  //Since we have a link to test, we need to explicitly set up our router.js
-  // router.js is not put into component tests by default
-
-  // Runs once before each test
-  hooks.beforeEach(function() {
-    this.owner.setupRouter();
-  });
-  
-  hooks.beforeEach(function() {
+  test('it renders all given rental properties by default', async function(assert) {
     this.setProperties({
       rentals: [{
         id: 'grand-old-mansion',
@@ -62,9 +54,7 @@ module('Integration | Component | rental', function(hooks) {
         description: 'Convenience is at your doorstep with this charming downtown rental. Great restaurants and active night life are within a few feet.'
       }]
     });
-  });
 
-  test('it renders all given rental properties by default', async function(assert) {
     await render(hbs`<Rentals @rentals={{this.rentals}} />`);
 
     assert.dom('.rentals').exists();
@@ -76,24 +66,5 @@ module('Integration | Component | rental', function(hooks) {
     assert.dom('.rentals .results li:nth-of-type(1)').containsText('Grand Old Mansion');
     assert.dom('.rentals .results li:nth-of-type(2)').containsText('Urban Living');
     assert.dom('.rentals .results li:nth-of-type(3)').containsText('Downtown Charm');
-  });
-
-  test('it updates the results according to the search query', async function(assert) {
-    await render(hbs`<Rentals @rentals={{this.rentals}} />`);
-
-    assert.dom('.rentals').exists();
-    assert.dom('.rentals input').exists();
-
-    await fillIn('.rentals input', 'Downtown');
-
-    assert.dom('.rentals .results').exists();
-    assert.dom('.rentals .results li').exists({ count: 1 });
-    assert.dom('.rentals .results li').containsText('Downtown Charm');
-
-    await fillIn('.rentals input', 'Mansion');
-
-    assert.dom('.rentals .results').exists();
-    assert.dom('.rentals .results li').exists({ count: 1 });
-    assert.dom('.rentals .results li').containsText('Grand Old Mansion');
   });
 });
